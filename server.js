@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 const db = require('./config/keys').mongoURI;
 
 const users = require('./routes/api/users');
@@ -19,9 +20,9 @@ mongoose
     .then(() => console.log('Curve the cake'))
     .catch((error) => console.log('ERR', error))
 
-app.get('/', (req, res) => {
-    res.send('HEllO')
-});
+
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

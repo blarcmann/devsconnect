@@ -3,6 +3,7 @@ const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const config = require('../../config/keys');
 const User = require('../../models/User');
 
@@ -40,7 +41,7 @@ router.post('/register', (req, res) => {
                         if (error) throw error;
                         newUser.password = hash;
                         newUser.save()
-                            .then(user => res.json(user))
+                            .then(user => res.status(201).json(user))
                             .catch(error => console.log(error))
                     })
                 })
@@ -90,5 +91,17 @@ router.post('/login', (req, res) => {
         })
 })
 
+// @route   POST api/users/current
+// @desc    Returns Current user
+// @access  Private
+
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+    res.status(200).json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        date_created: req.user.date
+    })
+})
 
 module.exports = router;
